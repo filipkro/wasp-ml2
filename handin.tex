@@ -1,0 +1,195 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{url}
+\usepackage[a4paper, margin=3cm]{geometry}
+\usepackage[parfill]{parskip}			% New line instead of indent for sections
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+% \usepackage[outdir=./figs]{epstopdf}
+
+\begin{document}
+\subsection*{Notes on running the code:}
+The code has been tested with Python 3.8.13, the packages required to run can be installed from the \url{requirements.txt} file, or manually: \url{autograd}, \url{matplotlib}, \url{imageio}. Running \url{python} \url{sgd.py} will train classifiers using a number of different step sizes (described in more detail below) and save figures and gifs to the directory \url{./figs}. To speed up the training the viz variable on line !!!!! can be set to \url{False}
+    \section*{1. Gradient}
+    The gradient of
+    \begin{align}
+    \begin{split}
+        F_i(\theta) &= \log(1 + e^{-y_i (\langle x_i, w \rangle + b)}) \\
+        &= \log(1 + e^{-y_i \langle \tilde{x}_i, \theta \rangle}) , \\ 
+        \text{where} \quad \tilde{x} &= \begin{bmatrix}
+            x_1, x_2, 1
+        \end{bmatrix}^\top, \quad \theta = \begin{bmatrix}
+            w_1, w_2, b
+        \end{bmatrix}^\top
+        % &  \[x_1, x_2, 1\]^T
+    \end{split}
+\end{align}
+is analytically computed as
+\begin{equation}
+    \nabla F_i(\theta) = \frac{-y_i \tilde{x}_i e^{-y_i\langle \tilde{x}_i, \theta \rangle}}{1 + e^{-y_i \langle \tilde{x}_i, \theta \rangle}}.
+\end{equation}
+
+This is the same as the autograd\footnote{\url{https://github.com/HIPS/autograd}} automatic differentiation of the funciton. The difference between the analytical and differentiated gradients are computed when running the \url{sgd.py} file.
+
+\section*{2 \& 3. SGD with different step sizes}
+% \section*{2 & 3. SGD with different step sizes}
+% The training was done using step sizes, $\alpha = \begin{bmatrix}
+%     0.001, 0.01, 0.05, 0.1, 1.0
+% \end{bmatrix}$, as well as with $\alpha$ decreasing every 10th epoch to 0.9 of its previous value. The training and test errors along with the difference between training error at epoch $k$ and $k-1$ for the different step sizes are shown below. The training terminates after 250 epochs.
+The training was done using step sizes, $\alpha = \begin{bmatrix}
+    0.001, 0.01, 0.05, 0.1, 1.0
+\end{bmatrix}$, as well as with $\alpha$ decreasing according to $\alpha_k = \frac{\alpha}{\sqrt{k+1}}$ with initial value of 0.05. The training and test errors along with the difference between training error at epoch $k$ and $k-1$ for the different step sizes are shown below. The training terminates after 250 epochs.
+
+As is expected training with a larger step size quickly converges to a decision boundary around which it oscillates, the bigger the step size the bigger the oscillations. Among the evaluated step sizes $\alpha = 0.001$ is the only one for which the training does not converge in 250 epochs. Looking at Figure \ref{fig:boundary}, showing the final decision boundaries, it is clear that basically the same boundary is found for all $\alpha$'s except 1.0 and 0.001. For the large $\alpha$ this is due to large oscillations and for the small $\alpha$ this is due to lack of convergence. Animations of how the boundary changes throughout training can be seen in the attached \url{.gif} files.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-1.000.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-1.000.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-0.100.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-0.100.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-0.050.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-0.050.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-0.010.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-0.010.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-0.001.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-0.001.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/errors-dec.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/deltas-dec.eps}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-1.000.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-0.100.eps}
+        \caption{}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-0.050.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-0.010.eps}
+        \caption{}
+    \end{subfigure}
+   
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-0.001.eps}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/boundary-dec.eps}
+        \caption{Decreasing $\alpha$}
+    \end{subfigure}
+    \caption{}
+    \label{fig:boundary}
+\end{figure}
+
+\section*{4. Final remarks}
+Notable for the experiments presented here is that the test error in general is slightly lower than the training error. As the two classes clealy are not linearly separable the classifier will not fit the noise in the training data to a great extent. Hence, the smaller test error is probably explained by a simpler dataset, i.e. less data points in the misclassified regions, due to the stochastic data generation.
+
+\end{document}

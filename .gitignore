@@ -1,0 +1,9 @@
+*.pyc
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.gz
+__pycache__
+figs
+.DS_Store
