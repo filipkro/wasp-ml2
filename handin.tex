@@ -13,7 +13,7 @@
 
 \begin{document}
 \subsection*{Notes on running the code:}
-The code has been tested with Python 3.8.13, the packages required to run can be installed from the \url{requirements.txt} file, or manually: \url{autograd}, \url{matplotlib}, \url{imageio}. Running \url{python} \url{sgd.py} will train classifiers using a number of different step sizes (described in more detail below) and save figures and gifs to the directory \url{./figs}. To speed up the training the viz variable on line !!!!! can be set to \url{False}
+The code has been tested with Python 3.8.13, the packages required to run can be installed from the \url{requirements.txt} file, or manually: \url{autograd}, \url{matplotlib}, \url{imageio}. Running \url{python} \url{sgd.py} will train classifiers using a number of different step sizes (described in more detail below) and save figures and gifs to the directory \url{./figs}. To speed up the training the viz variable on line 191 can be set to \url{False} to prevent the visualization of the decision boundary.
     \section*{1. Gradient}
     The gradient of
     \begin{align}
@@ -25,7 +25,6 @@ The code has been tested with Python 3.8.13, the packages required to run can be
         \end{bmatrix}^\top, \quad \theta = \begin{bmatrix}
             w_1, w_2, b
         \end{bmatrix}^\top
-        % &  \[x_1, x_2, 1\]^T
     \end{split}
 \end{align}
 is analytically computed as
@@ -190,6 +189,8 @@ As is expected training with a larger step size quickly converges to a decision 
 \end{figure}
 
 \section*{4. Final remarks}
-Notable for the experiments presented here is that the test error in general is slightly lower than the training error. As the two classes clealy are not linearly separable the classifier will not fit the noise in the training data to a great extent. Hence, the smaller test error is probably explained by a simpler dataset, i.e. less data points in the misclassified regions, due to the stochastic data generation.
+Notable for the experiments presented here is that the test error in general is slightly lower than the training error. As the two classes clealy are not linearly separable the classifier will not fit to noisy edge cases in the training data to a great extent. Hence, the smaller test error is probably explained by a simpler dataset, i.e. less data points in the misclassified regions, due to the stochastic data generation.
+
+I ran the training for a set number of epochs, mainly for the purpose of visualisation and comparison between the different learning rates. In this setup it obviously does not make any difference to keep training after the training error has converged. The training could be stopped when the difference $\text{error}_{k-1} - \text{error}_k$ is small enough or negative which would suggest that the gradient step passed the minima.
 
 \end{document}

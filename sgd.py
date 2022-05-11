@@ -19,12 +19,14 @@ class SGD():
         else:
             self.eval = False
 
-        print(f'Difference between gradients over data for some different theta:')
+        print(f'Difference between gradients for some different theta:')
         theta = [(-1.0,-1.0,-1.0), (0.0,0.0,0.0), (1.0,1.0,1.0)]
         for th in theta:
-            print(f'theta: {th}, diff: {self.compare_grads(x, y, np.array(th))}')
+            print(f'theta: {th}, ' \
+                f'diff: {self.compare_grads(x, y, np.array(th))}')
 
-    def train(self, theta=None, alpha=1e-2, epochs=1000, eps=0, alpha_dec=False, viz=True):
+    def train(self, theta=None, alpha=1e-2, epochs=1000, eps=0,
+              alpha_dec=False, viz=True):
         if not os.path.exists('figs'):
             os.makedirs('figs')
         self.gifnames = []
@@ -64,7 +66,8 @@ class SGD():
             prev_err = err
 
         if viz:
-            fname = f'figs/boundary-{alpha:.3f}.eps' if not alpha_dec else 'figs/boundary-dec.eps'
+            fname = f'figs/boundary-{alpha:.3f}.eps' if not alpha_dec \
+                else 'figs/boundary-dec.eps'
             plt.savefig(fname, format='eps')
 
         if self.eval:
@@ -72,25 +75,32 @@ class SGD():
             plt.semilogy(train_error, label='Training error')
             plt.semilogy(test_error, label='Test error')
             if alpha_dec:
-                plt.title(r'Errors throughout training, decreasing $\alpha$', fontsize=18)
+                plt.title(r'Errors throughout training, decreasing $\alpha$',
+                          fontsize=18)
             else:
-                plt.title(r'Errors throughout training, $\alpha = $' f'{alpha:.3f}', fontsize=18)
+                plt.title(r'Errors throughout training, $\alpha = $' \
+                    f'{alpha:.3f}', fontsize=18)
             plt.xlabel('Epochs', fontsize=16)
             plt.legend(fontsize=16, loc=1)
-            fn = f'figs/errors-{alpha:.3f}.eps' if not alpha_dec else 'figs/errors-dec.eps'
+            fn = f'figs/errors-{alpha:.3f}.eps' if not alpha_dec \
+                else 'figs/errors-dec.eps'
             plt.savefig(fn, format='eps')
             plt.figure()
             plt.semilogy(deltas)
             plt.xlabel('Epochs', fontsize=16)
             if alpha_dec:
-                plt.title(r'Training: |$error_k - error_{k-1}$|, decreasing $\alpha$', fontsize=18)
+                plt.title(r'Training: |$error_{k-1} - error_k$|, ' \
+                    r'decreasing $\alpha$', fontsize=18)
             else:
-                plt.title(r'Training: |$error_k - error_{k-1}$|, $\alpha = $' f'{alpha:.3f}', fontsize=18)
-            fn = f'figs/deltas-{alpha:.3f}.eps' if not alpha_dec else 'figs/deltas-dec.eps'
+                plt.title(r'Training: |$error_{k-1} - error_k$|, $\alpha = $' \
+                    f'{alpha:.3f}', fontsize=18)
+            fn = f'figs/deltas-{alpha:.3f}.eps' if not alpha_dec \
+                else 'figs/deltas-dec.eps'
             plt.savefig(fn, format='eps')
 
         if self.savegif and viz:
-            fname = f'boundary-{alpha}.gif' if not alpha_dec else 'boundary-dec.gif'
+            fname = f'boundary-{alpha}.gif' if not alpha_dec \
+                else 'boundary-dec.gif'
             with io.get_writer(fname, mode='I', duration=0.05) as writer:
                 for pic in self.gifnames:
                     im = io.imread(pic)
@@ -100,7 +110,8 @@ class SGD():
         plt.show(block=False)
 
     def get_plot_boundary(self, theta):
-        x1range = np.array([min(self.xtrain[0,:]) - 0.1, max(self.xtrain[0,:] + 0.1)])
+        x1range = np.array([min(self.xtrain[0,:]) - 0.1,
+                            max(self.xtrain[0,:] + 0.1)])
         x2min = min(self.xtrain[1,:]) - 0.1
 
         return x1range, -theta[0]/theta[1] * x1range - theta[2]/theta[1], x2min
@@ -111,16 +122,21 @@ class SGD():
         plt.plot(x, y)
         plt.fill_between(x, y, x2min)
         plt.scatter(self.xtrain[0, self.ytrain==1],
-                    self.xtrain[1, self.ytrain==1], label='Training data, class 1')
+                    self.xtrain[1, self.ytrain==1],
+                    label='Training data, class 1')
         plt.scatter(self.xtrain[0, self.ytrain==-1],
-                    self.xtrain[1, self.ytrain==-1], label='Training data, class -1')
+                    self.xtrain[1, self.ytrain==-1],
+                    label='Training data, class -1')
         if self.eval:
             plt.scatter(self.xtest[0, self.ytest==1],
-                        self.xtest[1, self.ytest==1], label='Test data, class 1')
+                        self.xtest[1, self.ytest==1],
+                        label='Test data, class 1')
             plt.scatter(self.xtest[0, self.ytest==-1],
-                        self.xtest[1, self.ytest==-1], label='Test data, class -1')
+                        self.xtest[1, self.ytest==-1],
+                        label='Test data, class -1')
 
-        plt.title(r'Decision Boundary, $\alpha = $' f'{alpha:.3f}', fontsize=18)
+        plt.title(r'Decision Boundary, $\alpha = $' f'{alpha:.3f}',
+                  fontsize=18)
         plt.legend(fontsize=12, loc=1)
         plt.show(block=False)
         if self.savegif:
@@ -179,5 +195,3 @@ for a in alpha:
 
 sgd.train(theta=theta, alpha=0.05, epochs=epochs, alpha_dec=True, viz=viz)
 plt.show()
-
-
